@@ -20,9 +20,11 @@ const TableOrdersLine = ({ item }) => {
                 <button className="btn btn-outline-success btn-sm me-1" title="Progredir Estado">
                     <i className="bi bi-arrow-right-circle"></i>
                 </button>
+
+                {(item.estado == "pendente") &&
                 <button className="btn btn-outline-danger btn-sm" title="Cancelar Pedido" onClick={() => handleCancelOrder(item.id)}>
                     <i className="bi bi-x-circle"></i>
-                </button>
+                </button> }
             </td>
         </tr>
     )

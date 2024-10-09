@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import NoProducts from "./NoProducts";
 import TableProducts from "./TableProducts";
-import axios from "axios";
+import Loading from "./loading";
+import api from './axiosApi'
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-    const productsApi = "http://127.0.0.1:8000/admin/obter_produtos";
+    const [loading, setLoading] = useState(true);
 
     const loadProducts = () => {
-        axios.get(productsApi)
+        setLoading(true);
+        const productsEndpoint = "obter_produtos";
+        api.get(productsEndpoint)
             .then((response) => {
                 setProducts(response.data);
             })
             .catch((error) => {
                 console.log(error);
+            })
+            .finally(() => {
+                setLoading(false);
             });
     }
 
@@ -22,9 +28,12 @@ const Products = () => {
     }, []);
     
     return (
-        products.length > 0 ?
+        <>
+        {products.length > 0 ?
             <TableProducts items={products} /> :
-            <NoProducts />
+            (!loading && <NoProducts />)}
+            {loading && <Loading/>}
+        </>
     );
 }
 
