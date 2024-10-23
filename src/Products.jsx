@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import NoProducts from "./NoProducts";
 import TableProducts from "./TableProducts";
-import Loading from "./loading";
-import api from './axiosApi'
+import api from "./axiosApi";
+import Loading from "./Loading";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -26,13 +26,13 @@ const Products = () => {
     useEffect(() => {
         loadProducts();
     }, []);
-    
+
     return (
         <>
-        {products.length > 0 ?
-            <TableProducts items={products} /> :
-            (!loading && <NoProducts />)}
-            {loading && <Loading/>}
+            {products.length > 0 ?
+                <TableProducts items={products} /> :
+                (!loading && <NoProducts />)}
+            {loading && <Loading />}
         </>
     );
 }

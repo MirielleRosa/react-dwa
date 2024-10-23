@@ -3,7 +3,7 @@ import React from 'react'
 const ModalConfirm = ({ question, confirmAction, cancelAction, modalId }) => {
     return (
         <div className="modal fade" id={modalId} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1">
-            <div className="modal-dialog">
+            <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5">Confirmação</h1>
