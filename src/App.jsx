@@ -4,7 +4,7 @@ import Home from "./Home";
 import Layout from "./Layout";
 import NotFound from "./NotFound";
 import Orders from "./Orders";
-import Users from "./Users";
+import OrderDetails from "./OrderDetails";
 
 const App = () => {
     return (
@@ -14,7 +14,7 @@ const App = () => {
                     <Route index element={<Home />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/orders" element={<Orders />} />
-                    <Route path="/users" element={<Users />} />
+                    <Route path="/orders/:id" element={<OrderDetails />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
