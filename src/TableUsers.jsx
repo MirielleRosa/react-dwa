@@ -1,6 +1,6 @@
 import TableUsersLine from "./TableUsersLine";
 
-const TableUsers = ({ items, handleDeleteUser }) => {
+const TableUsers = ({ items = [], handleDeleteUser }) => {
     return (
         <table className="table table-striped">
             <thead>
@@ -14,7 +14,7 @@ const TableUsers = ({ items, handleDeleteUser }) => {
                 </tr>
             </thead>
             <tbody>
-                {items.map(u => (
+                {Array.isArray(items) && items.map(u => (
                     <TableUsersLine 
                         item={u} 
                         key={u.id} 
