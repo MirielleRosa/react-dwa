@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'; 
 import ProductForm from './ProductForm';
 import FormButtons from './FormButtons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
  
 const EditProducts = () => { 
     const [inputs, setInputs] = useState({}); 
@@ -21,6 +21,11 @@ const EditProducts = () => {
     function handleChange(event) {
         event.preventDefault();
     }
+
+    useEffect(() => {
+        setInputs({...inputs, id: idProduto});
+        loadProductsById(idProduto);
+    }, {idProduto});
 
     return ( 
         <>

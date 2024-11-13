@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import api from './axiosApi';
-import TableUsers from "./TableUsers";
-import NoUsers from "./NoUsers";
-import ModalConfirm from "./ModalConfirm";
+import TableUsers from './TableUsers';
 import Loading from "./Loading";
+import api from "./axiosApi";
+import ModalConfirm from "./ModalConfirm";
+import NoUsers from "./NoUsers";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
-    const [selectedUserId, setSelectedUserId] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedUserId, setSelectedUserId] = useState(0);
 
     const loadUsers = () => {
         setLoading(true);
-        const usersEndpoint = "obter_usuarios";
+        const usersEndpoint = "admin/obter_usuarios";
         api.get(usersEndpoint)
             .then((response) => {
                 setUsers(response.data);
@@ -27,14 +27,13 @@ const Users = () => {
 
     const deleteUser = (userId) => {
         setLoading(true);
-        api.post(`excluir_usuario/${userId}`)
+        api.postForm("excluir_usuario", { "id_usuario": userId })
             .then(response => {
-                if (response.status === 204) {
-                    loadUsers(); 
-                }
+                if (response.status === 204)
+                    loadUsers();
             })
             .catch(error => {
-                console.error('Erro ao excluir usuário:', error);
+                console.error('Erro ao excluir o usuário:', error);
             })
             .finally(() => {
                 setLoading(false);
@@ -45,7 +44,7 @@ const Users = () => {
         setSelectedUserId(userId);
         const modal = new bootstrap.Modal(document.getElementById('modalDeleteUser'));
         modal.show();
-    };
+    }
 
     useEffect(() => {
         loadUsers();
@@ -53,22 +52,15 @@ const Users = () => {
 
     return (
         <>
-            {loading && <Loading />}
-            {!loading && users.length > 0 ? (
+            {users.length > 0 ?
                 <>
-                    <ModalConfirm 
-                        modalId="modalDeleteUser" 
-                        question="Deseja realmente excluir este usuário?" 
-                        confirmAction={() => deleteUser(selectedUserId)} 
-                    />
-                    <TableUsers 
-                        items={users} 
-                        handleDeleteUser={handleDeleteUser} 
-                    />
-                </>
-            ) : (!loading && <NoUsers />)}
+                    <ModalConfirm modalId="modalDeleteUser" question="Deseja realmente excluir este usuário?" confirmAction={() => deleteUser(selectedUserId)} />
+                    <TableUsers items={users} handleDeleteUser={handleDeleteUser} />
+                </> :
+                (!loading && <NoUsers />)}
+            {loading && <Loading />}
         </>
     );
-};
+}
 
-export default Users;
+export default Users

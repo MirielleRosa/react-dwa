@@ -1,6 +1,6 @@
 const NoUsers = () => {
     return (
-        <p className="lead">Não há Usuarios cadastrados.</p>
+        <p className="lead">Não há usuários cadastrados.</p>
     );
 }
 
