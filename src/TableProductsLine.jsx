@@ -1,28 +1,34 @@
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { NumberFormatter, CurrencyFormatter } from './formatters';
 
 const TableProductsLine = ({ item, handleDeleteProduct }) => {
     return (
         <tr>
-            <td>{NumberFormatter.format(item.id, 6)}</td>
+            <td>{item.id}</td>
             <td>{item.nome}</td>
-            <td>{CurrencyFormatter.format(item.preco)}</td>
-            <td>{NumberFormatter.format(item.estoque, 6)}</td>
+            <td>{item.preco}</td>
+            <td>{item.estoque}</td>
+            <td>{item.categoria_nome || 'Categoria não encontrada'}</td> {/* Exibe o nome da categoria */}
             <td>
-                <button className="btn btn-outline-danger btn-sm" title="Excluir" onClick={() => handleDeleteProduct(item.id)}>
+                <button 
+                    className="btn btn-outline-danger btn-sm" 
+                    title="Excluir Produto" 
+                    onClick={() => handleDeleteProduct(item.id)}
+                >
                     <i className="bi bi-trash"></i>
                 </button>
-                <Link to={`/products/${item.id}`} className="btn btn-outline-primary btn-sm ms-2" title="Alterar">
-                    <i className="bi bi-pencil"></i>
-                </Link>
             </td>
         </tr>
     );
 }
 
 TableProductsLine.propTypes = {
-    item: PropTypes.object.isRequired,
+    item: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        nome: PropTypes.string.isRequired,
+        preco: PropTypes.number.isRequired,
+        estoque: PropTypes.number.isRequired,
+        categoria_nome: PropTypes.string // Adiciona a validação para categoria_nome
+    }).isRequired,
     handleDeleteProduct: PropTypes.func.isRequired
 };
 

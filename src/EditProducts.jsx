@@ -1,43 +1,100 @@
-import { useNavigate, useParams } from 'react-router-dom'; 
+import { useNavigate, useParams } from 'react-router-dom';
 import ProductForm from './ProductForm';
-import FormButtons from './FormButtons';
 import { useEffect, useState } from 'react';
- 
-const EditProducts = () => { 
-    const [inputs, setInputs] = useState({}); 
-    const [errors, setErrors] = useState({}); 
-    const [modal, setModal] = useState(undefined); 
-    const navigate = useNavigate(); 
- 
-    const idProduto = useParams().id; 
-    if (!idProduto) { 
-        navigate("/listagem"); 
-    } 
+import api from "./axiosApi";
+import FormButtons from './FormButtons';
+import handleChange from './handleChange';
+import parseErrors from './parseErrors';
+import Loading from './Loading';
 
-    function handleSubmit(event) {
-        event.preventDefault();
+const EditProduct = () => {
+    const [inputs, setInputs] = useState({});
+    const [errors, setErrors] = useState({});
+    const [categorias, setCategorias] = useState([]); 
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    const idProduto = useParams().id;
+    if (!idProduto) {
+        navigate("/products");
     }
 
-    function handleChange(event) {
+    function loadProductById(id) {
+        setLoading(true);
+        const getProductEndpoint = `admin/obter_produto/${id}`;
+        api.get(getProductEndpoint)
+            .then(response => {
+                setInputs(response.data);
+            })
+            .catch(error => {
+                console.error('Erro ao carregar produto:', error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+    function loadCategories() {
+        const getCategoriesEndpoint = 'admin/listar_categorias'; 
+        api.get(getCategoriesEndpoint)
+            .then(response => {
+                setCategorias(response.data); 
+            })
+            .catch(error => {
+                console.error('Erro ao carregar categorias:', error);
+            });
+    }
+
+    async function handleSubmit(event) {
         event.preventDefault();
+        setLoading(true);
+        const editProductEndpoint = "admin/alterar_produto";
+
+        await api.post(editProductEndpoint, inputs)
+            .then((response) => {
+                if (response.status === 204) {
+                    navigate("/products");
+                } else {
+                    console.log(response);
+                }
+            })
+            .catch((error) => {
+                if (error && error.response && error.response.data)
+                    setErrors(parseErrors(error.response.data));
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+    function localHandleChange(event) {
+        handleChange(event, inputs, setInputs);
     }
 
     useEffect(() => {
-        setInputs({...inputs, id: idProduto});
-        loadProductsById(idProduto);
-    }, {idProduto});
+        setInputs({ ...inputs, id: idProduto });
+        loadProductById(idProduto);
+        loadCategories();
+    }, [idProduto]);
 
-    return ( 
+    return (
         <>
-            <div className="d-flex justify-content-between align-itms-center">
+            <div className="d-flex justify-content-between align-items-center">
                 <h1>Alteração de Produto</h1>
             </div>
-            <form onSubmit={handleSubmit} novalidate autoComplete='off'>
-                <ProductForm handleChange={handleChange} input={inputs} errors={errors} isNew={false} />
+            <form onSubmit={handleSubmit} noValidate autoComplete='off' className='mb-3'>
+                <ProductForm 
+                    handleChange={localHandleChange} 
+                    inputs={inputs} 
+                    errors={errors} 
+                    categorias={categorias} 
+                    isNew={false} 
+                />
                 <FormButtons cancelTarget="/products" />
             </form>
-        </> 
-    ); 
-} 
- 
-export default EditProducts;
+            {loading && <Loading />}
+        </>
+    );
+}
+
+export default EditProduct;
